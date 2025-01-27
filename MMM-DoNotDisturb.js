@@ -16,7 +16,8 @@ Module.register('MMM-DoNotDisturb', {
 
   notificationReceived: function(notification, payload, sender) {
     if (notification === this.config.eventNotification) {
-      Log.debug('Calendar event received from ' + sender.identifier)
+      Log.debug(`Processing calendar events from ${sender.identifier}:`, payload)
+      
       if (this.config.calendarSet.length === 0 || 
           this.config.calendarSet.includes(payload.calendarName)) {
         this.eventPool.set(sender.identifier, payload)
