@@ -1,4 +1,6 @@
 Module.register('MMM-DoNotDisturb', {
+  requiresVersion: "2.30.0",
+  
   defaults: {
     eventNotification: 'CALENDAR_EVENTS',
     message: "Do Not Disturb - Meeting in Progress",
