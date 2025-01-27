@@ -1,0 +1,7 @@
+.dnd-active {
+  color: #ff0000;
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+  padding: 20px;
+}
