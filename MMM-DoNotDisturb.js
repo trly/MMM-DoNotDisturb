@@ -3,17 +3,18 @@ Module.register('MMM-DoNotDisturb', {
     eventNotification: 'CALENDAR_EVENTS',
     message: "Do Not Disturb - Meeting in Progress",
     animationSpeed: 1000,
-    calendarSet: [], // Array of calendar names/URLs to monitor
+    calendarSet: [], 
   },
 
   start: function() {
+    Log.info('Starting module: ' + this.name)
     this.eventPool = new Map()
     this.activeEvent = null
   },
 
   notificationReceived: function(notification, payload, sender) {
     if (notification === this.config.eventNotification) {
-      // Only store events from selected calendars
+      Log.debug('Calendar event received from ' + sender.identifier)
       if (this.config.calendarSet.length === 0 || 
           this.config.calendarSet.includes(payload.calendarName)) {
         this.eventPool.set(sender.identifier, payload)
@@ -28,7 +29,6 @@ Module.register('MMM-DoNotDisturb', {
     
     for (const events of this.eventPool.values()) {
       const activeEvents = events.filter(event => {
-        // Only include events from selected calendars
         return (this.config.calendarSet.length === 0 || 
                 this.config.calendarSet.includes(event.calendarName)) &&
                event.startDate <= now && 
@@ -37,7 +37,13 @@ Module.register('MMM-DoNotDisturb', {
       currentEvents = currentEvents.concat(activeEvents)
     }
     
+    const wasActive = this.activeEvent
     this.activeEvent = currentEvents.length > 0
+    
+    if (wasActive !== this.activeEvent) {
+      Log.info(`DND Status changed to: ${this.activeEvent ? 'Active' : 'Inactive'}`)
+    }
+    
     this.updateDom(this.config.animationSpeed)
   },
 
