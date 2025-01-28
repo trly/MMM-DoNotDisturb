@@ -1,8 +1,8 @@
 {
-  "name": "mmm-template",
+  "name": "mmm-donotdisturb",
   "version": "1.0.0",
-  "description": "[Module description]",
-  "main": "MMM-Template.js",
+  "description": "A MagicMirror² module to display Do Not Disturb status",
+  "main": "MMM-DoNotDisturb.js",
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -10,17 +10,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+[GitHub url].git"
+    "url": "git+https://github.com/trly/MMM-DoNotDisturb.git"
   },
   "keywords": [
-    "template"
+    "magicmirror",
+    "smart mirror",
+    "do not disturb",
+    "dnd"
   ],
-  "author": "[Author]",
+  "author": "Travis Lyons",
   "license": "MIT",
   "bugs": {
-    "url": "[GitHub url]/issues"
+    "url": "https://github.com/trly/MMM-DoNotDisturb/issues"
   },
-  "homepage": "[GitHub url]#readme",
+  "homepage": "https://github.com/trly/MMM-DoNotDisturb#readme",
   "devDependencies": {
     "@eslint/js": "^9.10.0",
     "@stylistic/eslint-plugin": "^2.7.2",
