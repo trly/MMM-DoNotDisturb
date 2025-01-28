@@ -55,11 +55,10 @@ Module.register('MMM-DoNotDisturb', {
     
     if (wasActive !== this.activeEvent) {
       Log.info(`DND Status changed to: ${this.activeEvent ? 'Active' : 'Inactive'}`)
+      this.updateDom(this.config.animationSpeed)
     }
-    
-    this.updateDom(this.config.animationSpeed)
   },
-
+  
   getDom: function() {
     const wrapper = document.createElement("div")
     
