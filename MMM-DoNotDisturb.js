@@ -9,9 +9,11 @@ Module.register('MMM-DoNotDisturb', {
   },
 
   start: function() {
-    Log.info('Starting module: ' + this.name)
-    this.eventPool = new Map()
-    this.activeEvent = null
+    Log.info("Starting module: " + this.name)
+    this.updateStatus()
+    setInterval(() => {
+        this.updateStatus()
+    }, 60 * 1000)
   },
 
   notificationReceived: function(notification, payload, sender) {
