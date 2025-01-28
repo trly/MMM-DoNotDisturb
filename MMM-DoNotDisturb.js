@@ -11,6 +11,8 @@ Module.register('MMM-DoNotDisturb', {
 
   start: function() {
     Log.info("Starting module: " + this.name)
+    this.eventPool = new Map()
+    this.activeEvent = null
     this.updateStatus()
     setInterval(() => {
         this.updateStatus()
