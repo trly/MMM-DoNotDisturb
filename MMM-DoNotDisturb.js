@@ -6,17 +6,16 @@ Module.register('MMM-DoNotDisturb', {
     message: "Do Not Disturb - Meeting in Progress",
     animationSpeed: 1000,
     calendarSet: [],
-    includeFullDayEvents: false
+    checkInterval: 60 * 1000 // Default 1 minute in milliseconds
   },
 
   start: function() {
-    Log.info("Starting module: " + this.name)
+    Log.info('Starting module: ' + this.name)
     this.eventPool = new Map()
     this.activeEvent = null
-    this.updateStatus()
-    setInterval(() => {
-        this.updateStatus()
-    }, 60 * 1000)
+    this.sendSocketNotification("INIT", {
+      checkInterval: this.config.checkInterval
+    })
   },
 
   notificationReceived: function(notification, payload, sender) {
@@ -28,6 +27,12 @@ Module.register('MMM-DoNotDisturb', {
         this.eventPool.set(sender.identifier, payload)
         this.updateCurrentStatus()
       }
+    }
+  },
+
+  socketNotificationReceived: function(notification, payload) {
+    if (notification === "CHECK_EVENTS") {
+      this.updateCurrentStatus()
     }
   },
 

@@ -1,12 +1,26 @@
 const NodeHelper = require("node_helper")
 
 module.exports = NodeHelper.create({
+  start: function() {
+    this.timer = null
+    console.log("Starting node_helper for: " + this.name)
+  },
 
-  async socketNotificationReceived(notification, payload) {
-    if (notification === "GET_RANDOM_TEXT") {
-      const amountCharacters = payload.amountCharacters || 10
-      const randomText = Array.from({ length: amountCharacters }, () => String.fromCharCode(Math.floor(Math.random() * 26) + 97)).join("")
-      this.sendSocketNotification("EXAMPLE_NOTIFICATION", { text: randomText })
+  socketNotificationReceived: function(notification, payload) {
+    if (notification === "INIT") {
+      this.startMonitoring(payload.checkInterval)
     }
   },
+
+  startMonitoring: function(interval) {
+    this.timer = setInterval(() => {
+      this.sendSocketNotification("CHECK_EVENTS")
+    }, interval)
+  },
+
+  stop: function() {
+    if (this.timer) {
+      clearInterval(this.timer)
+    }
+  }
 })
