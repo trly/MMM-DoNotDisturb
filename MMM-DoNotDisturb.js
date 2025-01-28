@@ -3,7 +3,7 @@ Module.register('MMM-DoNotDisturb', {
   
   defaults: {
     eventNotification: 'CALENDAR_EVENTS',
-    message: "Do Not Disturb - Meeting in Progress",
+    message: "Do Not Disturb",
     animationSpeed: 1000,
     calendarSet: [],
     checkInterval: 60 * 1000 // Default 1 minute in milliseconds
@@ -58,7 +58,7 @@ Module.register('MMM-DoNotDisturb', {
       this.updateDom(this.config.animationSpeed)
     }
   },
-  
+
   getDom: function() {
     const wrapper = document.createElement("div")
     
