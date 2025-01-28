@@ -5,7 +5,8 @@ Module.register('MMM-DoNotDisturb', {
     eventNotification: 'CALENDAR_EVENTS',
     message: "Do Not Disturb - Meeting in Progress",
     animationSpeed: 1000,
-    calendarSet: [], 
+    calendarSet: [],
+    includeFullDayEvents: false
   },
 
   start: function() {
@@ -36,8 +37,8 @@ Module.register('MMM-DoNotDisturb', {
       const activeEvents = events.filter(event => {
         return (this.config.calendarSet.length === 0 || 
                 this.config.calendarSet.includes(event.calendarName)) &&
-               event.startDate <= now && 
-               event.endDate >= now
+               ((event.startDate <= now && event.endDate >= now) ||
+                (this.config.includeFullDayEvents && event.fullDayEvent))
       })
       currentEvents = currentEvents.concat(activeEvents)
     }
