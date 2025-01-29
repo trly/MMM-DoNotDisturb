@@ -5,6 +5,8 @@ module.exports = NodeHelper.create({
     this.timer = null
     this.eventPool = new Map()
     this.activeEvent = false
+    this.calendarSet = []
+    this.includeFullDayEvents = false
     Log.log(`Starting node helper for: ${this.name}`);
   },
 
@@ -13,6 +15,8 @@ module.exports = NodeHelper.create({
       case "INIT":
         Log.debug(`${this.name}: Received INIT notification with interval ${payload.checkInterval}ms`)
         this.config = payload
+        this.calendarSet = payload.calendarSet
+        this.includeFullDayEvents = payload.includeFullDayEvents
         this.startMonitoring(payload.checkInterval)
         break
       case "UPDATE_EVENTS":
