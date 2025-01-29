@@ -6,13 +6,14 @@ Module.register('MMM-DoNotDisturb', {
     message: "Do Not Disturb",
     animationSpeed: 1000,
     calendarSet: [],
-    checkInterval: 60 * 1000 // Default 1 minute in milliseconds
+    checkInterval: 60 * 1000,
+    includeFullDayEvents: false
   },
 
   start: function() {
     Log.info('Starting module: ' + this.name)
     this.eventPool = new Map()
-    this.activeEvent = null
+    this.activeEvent = false
     Log.debug(`${this.name}: Initializing with check interval ${this.config.checkInterval}ms`)
     this.sendSocketNotification("INIT", {
       checkInterval: this.config.checkInterval
@@ -45,7 +46,7 @@ Module.register('MMM-DoNotDisturb', {
     const now = Date.now()
     let currentEvents = []
     
-    Log.debug(`${this.name}: Updating status, checking ${this.eventPool.size} calendars`)
+    Log.debug(`${this.name}: Updating status`)
     
     for (const events of this.eventPool.values()) {
       const activeEvents = events.filter(event => {
