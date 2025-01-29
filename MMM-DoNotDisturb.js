@@ -13,7 +13,7 @@ Module.register('MMM-DoNotDisturb', {
   start: function() {
     Log.info('Starting module: ' + this.name)
     this.eventPool = new Map()
-    this.activeEvent = false
+    this.activeEvent = null
     Log.debug(`${this.name}: Initializing with check interval ${this.config.checkInterval}ms`)
     this.sendSocketNotification("INIT", {
       checkInterval: this.config.checkInterval
