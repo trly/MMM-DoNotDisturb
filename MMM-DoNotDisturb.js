@@ -12,6 +12,7 @@ Module.register('MMM-DoNotDisturb', {
 
   start: function() {
     Log.info('Starting module: ' + this.name)
+    Log.debug('Loaded config:', this.config)
     this.eventPool = new Map()
     this.activeEvent = null
     this.updateDom()
@@ -19,15 +20,18 @@ Module.register('MMM-DoNotDisturb', {
 
   notificationReceived: function(notification, payload, sender) {
     if (notification === this.config.eventNotification) {
-      Log.debug(`${this.name}: Received calendar events from ${sender.identifier}:`, payload)
+      Log.debug(`${this.name}: Received ${payload.length} calendar events from ${sender.identifier}:`, payload)
       
-      if (this.config.calendarSet.length === 0 || 
-          this.config.calendarSet.includes(payload.calendarName)) {
-        Log.debug(`${this.name}: Adding events from calendar ${payload.calendarName}`)
-        this.eventPool.set(sender.identifier, payload)
-      } else {
-        Log.debug(`${this.name}: Skipping events from calendar ${payload.calendarName} - not in calendarSet`)
-      }
+      const monitoredEvents = payload.map(event => {
+        if (this.config.calendarSet.length === 0 || 
+            this.config.calendarSet.includes(event.calendarName)) {
+          return event
+        }
+        return null
+      }).filter(event => event !== null)
+
+      Log.debug(`${this.name}: Adding ${monitoredEvents.length } events to the eventPool`, monitoredEvents)
+      this.eventPool.set(sender.identifier, JSON.parse(JSON.stringify(monitoredEvents)))
     }
   },
 
@@ -37,16 +41,20 @@ Module.register('MMM-DoNotDisturb', {
     const now = Date.now()
     let currentEvents = []
     
-    Log.debug(`${this.name}: Updating status`)
+    Log.debug(`${this.name}: Updating DND status`)
     
     for (const events of this.eventPool.values()) {
       const activeEvents = events.filter(event => {
         return (this.config.calendarSet.length === 0 || 
-                this.config.calendarSet.includes(event.calendarName)) &&
-               ((event.startDate <= now && event.endDate >= now) ||
-                (this.config.includeFullDayEvents && event.fullDayEvent))
+                this.config.calendarSet.includes(event.calendarName)) && 
+               ((!event.fullDayEvent && event.startDate <= now && event.endDate >= now) ||
+                (event.fullDayEvent && this.config.includeFullDayEvents))
       })
       currentEvents = currentEvents.concat(activeEvents)
+      Log.debug(`${this.name}: Found ${activeEvents.length} active events`)
+      for (const event of activeEvents) {
+        Log.debug(`${this.name}: Found active event: ${event.title}, ${event.startDate}, ${event.endDate}`)
+      }
     }
     
     this.activeEvent = currentEvents.length > 0
