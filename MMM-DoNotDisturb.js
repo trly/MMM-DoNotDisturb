@@ -12,12 +12,12 @@ Module.register('MMM-DoNotDisturb', {
 
   start: function() {
     Log.info('Starting module: ' + this.name)
-    this.activeEvent = false
-    this.sendSocketNotification("INIT", {
-      checkInterval: this.config.checkInterval,
-      calendarSet: this.config.calendarSet,
-      includeFullDayEvents: this.config.includeFullDayEvents
-    })
+    this.eventPool = new Map()
+    this.activeEvent = null
+    this.updateCurrentStatus()
+    this.timer = setInterval(() => {
+      this.updateCurrentStatus()
+    }, checkInterval)
   },
 
   notificationReceived: function(notification, payload, sender) {
@@ -27,18 +27,38 @@ Module.register('MMM-DoNotDisturb', {
       if (this.config.calendarSet.length === 0 || 
           this.config.calendarSet.includes(payload.calendarName)) {
         Log.debug(`${this.name}: Adding events from calendar ${payload.calendarName}`)
-        this.sendSocketNotification("UPDATE_EVENTS", {
-          sender: sender.identifier,
-          events: payload
-        })
+        this.eventPool.set(sender.identifier, payload)
+        this.updateCurrentStatus()
+      } else {
+        Log.debug(`${this.name}: Skipping events from calendar ${payload.calendarName} - not in calendarSet`)
       }
     }
   },
 
-  socketNotificationReceived: function(notification, payload) {
-    if (notification === "STATUS_CHANGED") {
-      Log.debug(`${this.name}: Received status change: active=${payload.active}`)
-      this.activeEvent = payload.active
+  updateCurrentStatus: function() {
+    const now = Date.now()
+    let currentEvents = []
+    
+    Log.debug(`${this.name}: Updating status`)
+    
+    for (const events of this.eventPool.values()) {
+      const activeEvents = events.filter(event => {
+        return (this.config.calendarSet.length === 0 || 
+                this.config.calendarSet.includes(event.calendarName)) &&
+               ((event.startDate <= now && event.endDate >= now) ||
+                (this.config.includeFullDayEvents && event.fullDayEvent))
+      })
+      currentEvents = currentEvents.concat(activeEvents)
+    }
+    
+    const wasActive = this.activeEvent
+    this.activeEvent = currentEvents.length > 0
+    
+    if (wasActive !== this.activeEvent) {
+      Log.info(`${this.name}: DND Status changed to: ${this.activeEvent ? 'Active' : 'Inactive'}`)
+      if (this.activeEvent) {
+        Log.debug(`${this.name}: Found ${currentEvents.length} active events`)
+      }
       this.updateDom(this.config.animationSpeed)
     }
   },
