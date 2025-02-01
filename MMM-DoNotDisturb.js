@@ -14,9 +14,7 @@ Module.register('MMM-DoNotDisturb', {
     Log.info('Starting module: ' + this.name)
     this.eventPool = new Map()
     this.activeEvent = null
-    this.timer = setInterval(() => {
-      this.updateCurrentStatus()
-    }, config.checkInterval)
+    this.updateDom()
   },
 
   notificationReceived: function(notification, payload, sender) {
@@ -27,14 +25,15 @@ Module.register('MMM-DoNotDisturb', {
           this.config.calendarSet.includes(payload.calendarName)) {
         Log.debug(`${this.name}: Adding events from calendar ${payload.calendarName}`)
         this.eventPool.set(sender.identifier, payload)
-        this.updateCurrentStatus()
       } else {
         Log.debug(`${this.name}: Skipping events from calendar ${payload.calendarName} - not in calendarSet`)
       }
     }
   },
 
-  updateCurrentStatus: function() {
+  getDom: function() {
+    const dom = document.createElement("div")
+    const wasActive = this.activeEvent
     const now = Date.now()
     let currentEvents = []
     
@@ -50,7 +49,6 @@ Module.register('MMM-DoNotDisturb', {
       currentEvents = currentEvents.concat(activeEvents)
     }
     
-    const wasActive = this.activeEvent
     this.activeEvent = currentEvents.length > 0
     
     if (wasActive !== this.activeEvent) {
@@ -60,18 +58,25 @@ Module.register('MMM-DoNotDisturb', {
       }
       this.updateDom(this.config.animationSpeed)
     }
-  },
 
-  getDom: function() {
-    const wrapper = document.createElement("div")
-    
     if (this.activeEvent) {
       Log.debug(`${this.name}: Rendering DND message: ${this.config.message}`)
-      wrapper.innerHTML = this.config.message
-      wrapper.className = "dnd-active"
+      dom.innerHTML = this.config.message
+      dom.className = "dnd-active"
     }
+
+    if (this.refreshTimer) {
+      clearTimeout(this.refreshTimer)
+      this.refreshTimer = null
+    }
+
+    this.refreshTimer = setTimeout(() => {
+      clearTimeout(this.refreshTimer)
+      this.refreshTimer = null
+      this.updateDom(this.config.animationSpeed)
+    }, thhis.config.checkInterval)
     
-    return wrapper
+    return dom
   },
 
   getStyles: function() {
