@@ -14,7 +14,6 @@ Module.register('MMM-DoNotDisturb', {
     Log.info('Starting module: ' + this.name)
     this.eventPool = new Map()
     this.activeEvent = null
-    this.updateCurrentStatus()
     this.timer = setInterval(() => {
       this.updateCurrentStatus()
     }, config.checkInterval)
