@@ -14,10 +14,10 @@ Module.register('MMM-DoNotDisturb', {
     Log.info('Starting module: ' + this.name)
     this.eventPool = new Map()
     this.activeEvent = null
-    Log.debug(`${this.name}: Initializing with check interval ${this.config.checkInterval}ms`)
-    this.sendSocketNotification("INIT", {
-      checkInterval: this.config.checkInterval
-    })
+    this.updateCurrentStatus()
+    this.timer = setInterval(() => {
+      this.updateCurrentStatus()
+    }, checkInterval)
   },
 
   notificationReceived: function(notification, payload, sender) {
@@ -32,13 +32,6 @@ Module.register('MMM-DoNotDisturb', {
       } else {
         Log.debug(`${this.name}: Skipping events from calendar ${payload.calendarName} - not in calendarSet`)
       }
-    }
-  },
-
-  socketNotificationReceived: function(notification, payload) {
-    if (notification === "CHECK_EVENTS") {
-      Log.debug(`${this.name}: Received CHECK_EVENTS notification`)
-      this.updateCurrentStatus()
     }
   },
 
