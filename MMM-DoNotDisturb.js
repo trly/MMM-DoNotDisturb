@@ -17,7 +17,7 @@ Module.register('MMM-DoNotDisturb', {
     this.updateCurrentStatus()
     this.timer = setInterval(() => {
       this.updateCurrentStatus()
-    }, checkInterval)
+    }, config.checkInterval)
   },
 
   notificationReceived: function(notification, payload, sender) {
