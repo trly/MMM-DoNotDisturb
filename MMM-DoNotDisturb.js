@@ -74,7 +74,7 @@ Module.register('MMM-DoNotDisturb', {
       clearTimeout(this.refreshTimer)
       this.refreshTimer = null
       this.updateDom(this.config.animationSpeed)
-    }, thhis.config.checkInterval)
+    }, this.config.checkInterval)
     
     return dom
   },
