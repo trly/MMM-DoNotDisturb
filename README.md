@@ -1,29 +1,24 @@
-# MMM-Template
-Use this template for creating new MagicMirror² modules.
+# MMM-DoNotDisturb
 
-See the [wiki page](https://github.com/Dennis-Rosenbaum/MMM-Template/wiki) for an in depth overview of how to get started.
+A MagicMirror² module that provides Do Not Disturb notification functionality for your smart mirror display.
 
-# MMM-Template
+![Example of MMM-DoNotDisturb](./example_1.png)
 
-![Example of MMM-Template](./example_1.png)
+This module allows you to display a Do Not Disturb message on your MagicMirror² display when an active calendar event is detected. Perfect for letting others know that you're busy and not to disturb you.
 
-[Module description]
+## Install
 
-## Installation
+In your terminal, go to your MagicMirror² Module folder and clone MMM-DoNotDisturb:
 
-### Install
 
-In your terminal, go to your [MagicMirror²][mm] Module folder and clone MMM-Template:
-
-```bash
 cd ~/MagicMirror/modules
-git clone [GitHub url]
-```
+git clone https://github.com/trly/MMM-DoNotDisturb.git
 
-### Update
+
+## Update
 
 ```bash
-cd ~/MagicMirror/modules/MMM-Template
+cd ~/MagicMirror/modules/MMM-DoNotDisturb
 git pull
 ```
 
@@ -33,39 +28,25 @@ To use this module, add it to the modules array in the `config/config.js` file:
 
 ```js
     {
-        module: 'MMM-Template',
-        position: 'lower_third'
-    },
-```
-
-Or you could use all the options:
-
-```js
-    {
-        module: 'MMM-Template',
-        position: 'lower_third',
+        module: 'MMM-DoNotDisturb',
+        position: 'top_bar',
         config: {
-            exampleContent: 'Welcome world'
+            // See configuration options below
         }
     },
+
 ```
 
 ## Configuration options
 
-Option|Possible values|Default|Description
-------|------|------|-----------
-`exampleContent`|`string`|not available|The content to show on the page
-
-## Sending notifications to the module
-
-Notification|Description
-------|-----------
-`TEMPLATE_RANDOM_TEXT`|Payload must contain the text that needs to be shown on this module
-
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `eventNotification` | `string` | `"CALENDAR_EVENTS"` | The notification name to listen for calendar events |
+| `animationSpeed` | `number` | `1000` | Speed of the show/hide animation in milliseconds |
+| `calendarSet` | `array` | `[]` | Array of calendar names to monitor. Empty array means all calendars. |
+| `includeFullDayEvents` | `boolean` | `false` | Whether to include full day events in DND status |
 ## Developer commands
 
 - `npm install` - Install devDependencies like ESLint.
 - `npm run lint` - Run linting and formatter checks.
 - `npm run lint:fix` - Fix linting and formatter issues.
-
-[mm]: https://github.com/MagicMirrorOrg/MagicMirror
