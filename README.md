@@ -2,7 +2,7 @@
 
 A MagicMirror² module that provides Do Not Disturb notification functionality for your smart mirror display.
 
-![Example of MMM-DoNotDisturb](./example_1.png)
+![Example of MMM-DoNotDisturb](./example.png)
 
 This module allows you to display a Do Not Disturb message on your MagicMirror² display when an active calendar event is detected. Perfect for letting others know that you're busy and not to disturb you.
 
